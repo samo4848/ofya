@@ -156,9 +156,14 @@ module BP3D.Floorplanner {
             this.planTextureZoom += deltaZoom;
         }
 
-        public zoomPlanTextureReset(){
+        public zoomPlanTextureReset() {
             this.planTextureZoom = 1.0;
         }
+
+        public setRulerLength(rulerLength){
+            this.rulerLength = rulerLength;
+        }
+
 
         /** */
         public draw() {
@@ -167,6 +172,8 @@ module BP3D.Floorplanner {
             if (this.validPlanTexture) {
 
                 this.drawPlanTexture(this.planTexture);
+
+                this.drawRuler(this.rulerLength);
 
             }
 
@@ -208,6 +215,20 @@ module BP3D.Floorplanner {
                 this.drawEdgeLabel(wall.frontEdge);
             }
         }
+
+        private drawRuler(rulerLength) {
+
+            this.drawLine(
+                this.viewmodel.convertX(100),
+                this.viewmodel.convertY(100),
+                this.viewmodel.convertX(100 + rulerLength),
+                this.viewmodel.convertY(100),
+                wallWidth,
+                wallColor
+            );
+
+        }
+
 
         /** */
         private drawWall(wall: Model.Wall) {

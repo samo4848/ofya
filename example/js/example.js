@@ -323,7 +323,7 @@ var SideMenu = function (blueprint3d, floorplanControls, modalEffects) {
         $(".sidebar").height(window.innerHeight);
         $("#add-items").height(window.innerHeight);
 
-    };
+    }
 
     // TODO: this doesn't really belong here
     function initItems() {
@@ -505,7 +505,7 @@ var ViewerFloorplanner = function (blueprint3d) {
         });
 
         $(plan_zoom_out).click(function () {
-           scope.floorplanner.view.zoomPlanTextureOut(zoomDelta);
+            scope.floorplanner.view.zoomPlanTextureOut(zoomDelta);
             scope.floorplanner.view.draw();
         });
         $(plan_zoom_in).click(function () {
@@ -525,6 +525,9 @@ var ViewerFloorplanner = function (blueprint3d) {
             $("#rulerDiv").show();
         });
 
+        $("ruler_length").change(function () {
+            scope.floorplanner.view.setRulerLength($("ruler_length").val());
+        });
 
     }
 
