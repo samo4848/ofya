@@ -62,6 +62,8 @@ module BP3D.Floorplanner {
 
         private planTextureZoom = 1.0;
 
+        private rulerLength = 1000.0;
+
         /** */
         constructor(private floorplan: Model.Floorplan, private viewmodel: Floorplanner, private canvas: string) {
             this.canvasElement = <HTMLCanvasElement>document.getElementById(canvas);
