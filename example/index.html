@@ -102,8 +102,17 @@
                                 Длина
                             </label>
                             <div class="col-sm-6">
-                                <input type="number" class="form-control" id="ruler_length" value="1000">
+                                <input type="number" class="form-control" id="ruler_length" value=""> см
                             </div>
+
+                            <span>&nbsp;</span>
+
+                            <button class="btn btn-block btn-danger" id="ruler_set_length">
+                                <span class="glyphicon glyphicon-trash"></span>
+                                Проставить
+                            </button>
+
+
                         </div>
                     </div>
                 </div>
@@ -130,7 +139,7 @@
             <!-- Wall Textures -->
             <div id="wallTextures" style="display:none; padding: 0 20px">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Adjust Wall</div>
+                    <div class="panel-heading">Стена</div>
                     <div class="panel-body" style="color: #333333">
                         <div class="col-sm-6" style="padding: 3px">
                             <a href="#" class="thumbnail texture-select-thumbnail"
@@ -202,6 +211,10 @@
                     <a class="btn btn-default bottom" href="#" id="move-right">
                         <span class="glyphicon glyphicon-arrow-right"></span>
                     </a>
+
+
+
+
                 </div>
 
                 <div id="loading-modal">
@@ -268,6 +281,15 @@
                         <a class="btn btn-default bottom" href="#" id="plan-move-right">
                             <span class="glyphicon glyphicon-arrow-right"></span>
                         </a>
+
+                        <span class="btn-group-vertical">
+                <a class="btn btn-default" href="#" id="rotate-left">
+                  <span class="glyphicon glyphicon-repeat icon-flipped"></span>
+                </a>
+                <a class="btn btn-default" href="#" id="rotate-right">
+                  <span class="glyphicon glyphicon-repeat "></span>
+                </a>
+              </span>
                     </div>
 
                 </div>

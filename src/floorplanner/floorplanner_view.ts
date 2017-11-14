@@ -13,8 +13,13 @@ module BP3D.Floorplanner {
     export const floorplannerModes = {
         MOVE: 0,
         DRAW: 1,
-        DELETE: 2
+        DELETE: 2,
+        RULER: 3
     };
+
+    const rulerRadius = 5;
+    const rulerColor = "#FEE028";
+    const rulerColor2 = "#FBB610";
 
     // grid parameters
     const gridSpacing = 20; // pixels
@@ -62,7 +67,7 @@ module BP3D.Floorplanner {
 
         private planTextureZoom = 1.0;
 
-        private rulerLength = 1000.0;
+        private rotateAngle = 0.0;
 
         /** */
         constructor(private floorplan: Model.Floorplan, private viewmodel: Floorplanner, private canvas: string) {
@@ -100,6 +105,7 @@ module BP3D.Floorplanner {
 
             this.planTextureZoom = 1.0;
 
+            this.rotateAngle = 0.0;
         }
 
         //TODO:check valid
@@ -114,13 +120,20 @@ module BP3D.Floorplanner {
             var planWidth = planTexture.width;
             var planHeight = planTexture.height;
 
-            var deltaX = (width - planWidth) / 2;
-            var deltaY = (height - planHeight) / 2;
+            var deltaX = 0;//(width - planWidth) / 2;
+            var deltaY = 0;//(height - planHeight) / 2;
 
             var drawWidth = planWidth * this.planTextureZoom;
             var drawHeight = planHeight * this.planTextureZoom;
 
+
+            this.context.save();
+
+            this.context.rotate(this.rotateAngle *Math.PI/180);
             this.context.drawImage(planTexture, 0, 0, planWidth, planHeight, deltaX + this.planTextureDeltaX, deltaY + this.planTextureDeltaY, drawWidth, drawHeight);
+
+            this.context.restore();
+
         }
 
         public movePlanTextureLeft(delta) {
@@ -160,8 +173,41 @@ module BP3D.Floorplanner {
             this.planTextureZoom = 1.0;
         }
 
+        public planTextureRotateLeft(deltaAngle){
+            this.changeRotateAngle(-deltaAngle);
+        }
+
+        public planTextureRotateRight(deltaAngle){
+            this.changeRotateAngle(deltaAngle);
+        }
+
+        private changeRotateAngle(deltaAngle){
+            this.rotateAngle += deltaAngle;
+        }
+
         public setRulerLength(rulerLength){
-            this.rulerLength = rulerLength;
+
+            if(this.viewmodel.rulerStart == null && this.viewmodel.rulerEnd == null){
+                return;
+            }
+
+            var length:number = this.calcLength(this.viewmodel.rulerEnd.x, this.viewmodel.rulerEnd.y, this.viewmodel.rulerStart);
+
+            if(length > 0) {
+                var lengthInUnits = length*10;
+
+                var ratio:number = rulerLength / lengthInUnits;
+
+                ratio = ratio  * 0.6;
+
+                console.log("Resize ratio : " + ratio);
+
+
+                this.changePlanTextureZoom(ratio);
+
+            }
+
+
         }
 
 
@@ -172,8 +218,6 @@ module BP3D.Floorplanner {
             if (this.validPlanTexture) {
 
                 this.drawPlanTexture(this.planTexture);
-
-                this.drawRuler(this.rulerLength);
 
             }
 
@@ -193,6 +237,10 @@ module BP3D.Floorplanner {
 
             if (this.viewmodel.mode == floorplannerModes.DRAW) {
                 this.drawTarget(this.viewmodel.targetX, this.viewmodel.targetY, this.viewmodel.lastNode);
+            }
+
+            if (this.viewmodel.mode == floorplannerModes.RULER) {
+                this.drawRuler(this.viewmodel.targetX, this.viewmodel.targetY, this.viewmodel.rulerStart, this.viewmodel.rulerEnd);
             }
 
             this.floorplan.getWalls().forEach((wall) => {
@@ -216,19 +264,62 @@ module BP3D.Floorplanner {
             }
         }
 
-        private drawRuler(rulerLength) {
+        private drawRuler(x, y, rulerStart, rulerEnd) {
 
-            this.drawLine(
-                this.viewmodel.convertX(100),
-                this.viewmodel.convertY(100),
-                this.viewmodel.convertX(100 + rulerLength),
-                this.viewmodel.convertY(100),
-                wallWidth,
-                wallColor
+            var drawX = x;
+            var drawY = y;
+
+            if(rulerEnd != null){
+                drawX = rulerEnd.x;
+                drawY = rulerEnd.y;
+            }
+
+            this.drawCircle(
+                this.viewmodel.convertX(drawX),
+                this.viewmodel.convertY(drawY),
+                rulerRadius,
+                rulerColor
             );
 
+            if(rulerStart != null) {
+                this.drawCircle(
+                    this.viewmodel.convertX(rulerStart.x),
+                    this.viewmodel.convertY(rulerStart.y),
+                    rulerRadius,
+                    rulerColor
+                );
+
+                this.drawLine(
+                    this.viewmodel.convertX(drawX),
+                    this.viewmodel.convertY(drawY),
+                    this.viewmodel.convertX(rulerStart.x),
+                    this.viewmodel.convertY(rulerStart.y),
+                    5,
+                    rulerColor
+                );
+                this.drawLine(
+                    this.viewmodel.convertX(drawX),
+                    this.viewmodel.convertY(drawY)+5,
+                    this.viewmodel.convertX(rulerStart.x),
+                    this.viewmodel.convertY(rulerStart.y)+5,
+                    2,
+                    rulerColor2
+                );
+            }
         }
 
+
+        private calcLength(drawX, drawY, rulerStart){
+            if(rulerStart == null){
+                return 0;
+            }
+
+            var dx = drawX - rulerStart.x;
+            var dy = drawY - rulerStart.y;
+            var length = Math.sqrt((dx*dx) + (dy*dy));
+
+            return length;
+        }
 
         /** */
         private drawWall(wall: Model.Wall) {

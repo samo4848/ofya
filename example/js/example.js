@@ -427,7 +427,14 @@ var ViewerFloorplanner = function (blueprint3d) {
 
     var zoomDelta = 0.05;
 
+    var rotateAngle = 1;
+
     var ruler = "#ruler";
+    var ruler_set_length = "#ruler_set_length";
+    var ruler_length = "#ruler_length";
+
+    var rotate_left = "#rotate-left";
+    var rotate_right = "#rotate-right";
 
     var activeStyle = 'btn-primary disabled';
 
@@ -443,15 +450,22 @@ var ViewerFloorplanner = function (blueprint3d) {
         // mode buttons
         scope.floorplanner.modeResetCallbacks.add(function (mode) {
             $("#rulerDiv").hide();
+
             $(draw).removeClass(activeStyle);
             $(remove).removeClass(activeStyle);
             $(move).removeClass(activeStyle);
+            $(ruler).removeClass(activeStyle);
+
             if (mode == BP3D.Floorplanner.floorplannerModes.MOVE) {
                 $(move).addClass(activeStyle);
             } else if (mode == BP3D.Floorplanner.floorplannerModes.DRAW) {
                 $(draw).addClass(activeStyle);
             } else if (mode == BP3D.Floorplanner.floorplannerModes.DELETE) {
                 $(remove).addClass(activeStyle);
+            } else
+            if (mode == BP3D.Floorplanner.floorplannerModes.RULER) {
+                $("#rulerDiv").show();
+                $(ruler).addClass(activeStyle);
             }
 
             if (mode == BP3D.Floorplanner.floorplannerModes.DRAW) {
@@ -460,6 +474,11 @@ var ViewerFloorplanner = function (blueprint3d) {
             } else {
                 $("#draw-walls-hint").hide();
             }
+        });
+
+        $(ruler).click(function () {
+            $("#rulerDiv").show();
+            scope.floorplanner.setMode(BP3D.Floorplanner.floorplannerModes.RULER);
         });
 
         $(move).click(function () {
@@ -517,16 +536,20 @@ var ViewerFloorplanner = function (blueprint3d) {
             scope.floorplanner.view.draw();
         });
 
-        $(ruler).click(function () {
-            $("#rulerDiv").show();
+        $(rotate_left).click(function () {
+            scope.floorplanner.view.planTextureRotateLeft(rotateAngle);
+            scope.floorplanner.view.draw();
         });
 
-        $(ruler).click(function () {
-            $("#rulerDiv").show();
+        $(rotate_right).click(function () {
+            scope.floorplanner.view.planTextureRotateRight(rotateAngle);
+            scope.floorplanner.view.draw();
         });
 
-        $("ruler_length").change(function () {
-            scope.floorplanner.view.setRulerLength($("ruler_length").val());
+        $(ruler_set_length).click(function () {
+            scope.floorplanner.view.setRulerLength($(ruler_length).val());
+            scope.floorplanner.setMode(BP3D.Floorplanner.floorplannerModes.MOVE);
+            scope.floorplanner.view.draw();
         });
 
     }

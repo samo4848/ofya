@@ -145,6 +145,18 @@ module BP3D.Model {
       return corner;
     }
 
+      /**
+       * Creates a new ruler.
+       * @param x The x coordinate.
+       * @param y The y coordinate.
+       * @param id An optional id. If unspecified, the id will be created internally.
+       * @returns The new corner.
+       */
+      public newRuler(x: number, y: number, id?: string): Ruler {
+          var ruler = new Ruler(this, x, y, id);
+          return ruler;
+      }
+
     /** Removes a corner.
      * @param corner The corner to be removed.
      */

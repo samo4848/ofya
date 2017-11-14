@@ -35,6 +35,9 @@ module BP3D.Floorplanner {
         /** drawing state */
         public lastNode = null;
 
+        public rulerStart = null;
+        public rulerEnd = null
+
         /** */
         private wallWidth: number;
 
@@ -178,7 +181,7 @@ module BP3D.Floorplanner {
             this.mouseY = (event.clientY - this.canvasElement.offset().top) * this.cmPerPixel + this.originY * this.cmPerPixel;
 
             // update target (snapped position of actual mouse)
-            if (this.mode == floorplannerModes.DRAW || (this.mode == floorplannerModes.MOVE && this.mouseDown)) {
+            if (this.mode == floorplannerModes.RULER || this.mode == floorplannerModes.DRAW || (this.mode == floorplannerModes.MOVE && this.mouseDown)) {
                 this.updateTarget();
             }
 
@@ -236,6 +239,17 @@ module BP3D.Floorplanner {
         private mouseup() {
             this.mouseDown = false;
 
+            //Ruler
+            if (this.mode == floorplannerModes.RULER) {
+                if (this.rulerStart == null) {
+                    this.rulerStart = this.floorplan.newRuler(this.targetX, this.targetY);
+                } else {
+                    if (this.rulerEnd == null) {
+                        this.rulerEnd = this.floorplan.newRuler(this.targetX, this.targetY);
+                    }
+                }
+            }
+
             // drawing
             if (this.mode == floorplannerModes.DRAW && !this.mouseMoved) {
                 var corner = this.floorplan.newCorner(this.targetX, this.targetY);
@@ -271,6 +285,8 @@ module BP3D.Floorplanner {
         /** */
         private setMode(mode: number) {
             this.lastNode = null;
+            this.rulerStart = null;
+            this.rulerEnd = null;
             this.mode = mode;
             this.modeResetCallbacks.fire(mode);
             this.updateTarget();
