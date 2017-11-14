@@ -3,16 +3,16 @@
 module BP3D.Core {
 
   /** Dimensioning in Inch. */
-  export const dimInch: string = "inch";
+  export const dimInch: string = "дюйм";
 
   /** Dimensioning in Meter. */
-  export const dimMeter: string = "m";
+  export const dimMeter: string = "м";
 
   /** Dimensioning in Centi Meter. */
-  export const dimCentiMeter: string = "cm";
+  export const dimCentiMeter: string = "см";
 
   /** Dimensioning in Milli Meter. */
-  export const dimMilliMeter: string = "mm";
+  export const dimMilliMeter: string = "мм";
 
   /** Dimensioning functions. */
   export class Dimensioning {
@@ -28,12 +28,12 @@ module BP3D.Core {
           var inches = Math.round((realFeet - feet) * 12);
           return feet + "'" + inches + '"';
         case dimMilliMeter:
-          return "" + Math.round(10 * cm) + " mm";
+          return "" + Math.round(10 * cm) + " мм";
         case dimCentiMeter:
-          return "" + Math.round(10 * cm) / 10 + " cm";
+          return "" + Math.round(10 * cm) / 10 + " см";
         case dimMeter:
         default:
-          return "" + Math.round(10 * cm) / 1000 + " m";
+          return "" + Math.round(10 * cm) / 1000 + " м";
       }
     }
   }
